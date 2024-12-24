@@ -14,6 +14,12 @@ class Bank:
 
     def get_customers(self):
         return self.__customers
+    
+    def get_customer(self, username):
+        for c in self.__customers:
+            if c.get_username() == username:
+                return c
+        return None
 
     def get_name(self):
         return self.__name

@@ -1,22 +1,20 @@
 from django.shortcuts import render, redirect
 from classes.bank import *
 from classes.admin import *
-from datetime import datetime,timedelta
+from datetime import datetime, timedelta
 import uuid
 from banking_site.models import AccountRecord
-# Create your views here.
+
 # Create a bank object
 b = Bank("Bank of Pakistan", "123 Main St, New York, NY 10001")
 # Create an admin object associated with the bank
 admin = Admin("admin", "12345678", b.get_customers())
-# initialize the global customer variable to None 
-customer = None
+
 
 def home(request):
     # Check if the user is logged in then logout the user
-    global customer
-    if customer:
-        customer = None
+    if 'customer_id' in request.session:
+        request.session.pop('customer_id')
     return render(request, 'home.html', {'home': True})
 
 def login(request):
@@ -27,10 +25,9 @@ def login(request):
         for c in b.get_customers():
             # Check if the username and password are correct
             if c.get_username() == username and c.verify_password(password):
-                global customer
-                # Set the global customer variable to the current customer
-                customer = c
-                # Redirect to the user home page
+                # Store the user data in the session
+                request.session['customer_id'] = c.get_username()
+
                 # Check if the interest needs to be added to the accounts
                 alerts = []
                 interest_accounts = []
@@ -49,7 +46,7 @@ def login(request):
                             # by reversing the list of transactions and finding the first transaction of type loan
                             transactions = []
                             # get the transactions of the customer
-                            for transaction in customer.get_transactions():
+                            for transaction in c.get_transactions():
                                 if transaction.get_account_number() == account.get_account_number():
                                     Interest_date = AccountRecord.objects.get(account_num = account.get_account_number()).last_interest_addition_date
                                     transactions.append({'type': transaction.get_transaction_type(), 'date': transaction.get_transaction_date(), 'interest_date': Interest_date})
@@ -223,6 +220,7 @@ def admin_transactions_view(request, name, account_num):
 def user_home(request):
     # calculate the total number of accounts of the logged in customer
     total_accounts = 0
+    customer = b.get_customer(request.session['customer_id'])
     for account_type in customer.get_accounts():
         total_accounts += len(customer.get_accounts()[account_type])
    
@@ -237,6 +235,8 @@ def user_home(request):
 
 def show(request):
     selected_accounts = []
+    customer = b.get_customer(request.session['customer_id'])
+
     # get the account type from the url
     msg = request.GET.get('msg')
 
@@ -260,6 +260,8 @@ def generate_account_number(account_type):
     return account_number
 
 def account_creation(request):
+    customer = b.get_customer(request.session['customer_id'])
+
     if request.method == 'POST':
         # get the account type and pin from the form
         pin = request.POST.get('pin')
@@ -291,6 +293,7 @@ def account_creation(request):
     return render(request,'setpin.html') 
 
 def account_verification(request, account_number):
+    customer = b.get_customer(request.session['customer_id'])
     if request.method == 'POST':
         # get the pin from the form
         pin = request.POST.get('pin')
@@ -307,6 +310,7 @@ def account_verification(request, account_number):
     return render(request, 'Verifypin.html', {'account_num': account_number})
 
 def account_details(request, account_type, acnt_num):
+    customer = b.get_customer(request.session['customer_id'])
     transactions = []
     # get the account details of the specified account type and account number
     for account in customer.get_accounts()[account_type]:
@@ -349,6 +353,7 @@ def account_details(request, account_type, acnt_num):
     return render(request, 'account_detail.html', {'account_type': account_type, 'account_num': acnt_num, 'balance': balance, 'creation_date': creation_date, 'transactions': transactions, 'display': True, 'interest_rate': interest})
 
 def account_deposit(request, account_type, acnt_num):
+    customer = b.get_customer(request.session['customer_id'])
     # Get the balance of the account
     for acnt in customer.get_accounts()[account_type]:
         if acnt.get_account_number() == acnt_num:
@@ -403,6 +408,7 @@ def account_deposit(request, account_type, acnt_num):
     return render(request, 'deposit.html', {'account_type': account_type, 'account_num': acnt_num, 'display': True, 'balance': balance})
 
 def account_withdraw(request, account_type, acnt_num):
+    customer = b.get_customer(request.session['customer_id'])
     # get the balance of the account
     for acnt in customer.get_accounts()[account_type]:
         if acnt.get_account_number() == acnt_num:
@@ -450,6 +456,7 @@ def account_withdraw(request, account_type, acnt_num):
     return render(request, 'withdraw.html', {'account_type': account_type, 'account_num': acnt_num,'display': True, 'balance': balance})
 
 def take_loan(request, act_type, act_num):
+    customer = b.get_customer(request.session['customer_id'])
     for account in customer.get_accounts()[act_type]:
         if account.get_account_number() == act_num:
             principle_amount = account.get_principle_amount()
