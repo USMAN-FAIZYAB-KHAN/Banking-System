@@ -47,7 +47,19 @@ Customers can review their transactions and account balances. Administrators can
 
 ## 📸 Screenshots
 
-![Home Page Screenshot]()  
+![User Home Page](./Screenshots/user_home.png)  
+
+![User Accounts](./Screenshots/user_accounts.png)  
+
+![Account Detail Page](./Screenshots/account_detail.png)  
+
+![Loan Page](./Screenshots/take_loan.png) 
+
+![Admin Home Page](./Screenshots/admin_home.png)  
+
+![Admin Accounts View](./Screenshots/admin_accounts.png) 
+
+![Admin Transactions View](./Screenshots/admin_transactions.png)  
 
 ---
 
@@ -93,11 +105,7 @@ The project is built with the following dependency:
 
 ---
 
-Understood! Here's a more balanced version with a few emojis for a cleaner look:
-
----
-
-## 🗝️ Admin & Dummy User Credentials
+## 🗝 Admin and Dummy User Credentials
 
 ### **👑 Admin Credentials**  
 - **Username**: Admin  
