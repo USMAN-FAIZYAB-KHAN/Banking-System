@@ -11,6 +11,7 @@ Welcome to the Online Banking System! This application allows users to manage mu
 4. [Getting Started](#-getting-started)
 5. [Dependencies](#-dependencies)
 6. [User Credentials](#-admin-and-dummy-user-credentials)
+7. [Contributors](#-contributors)
 
 ---
 
@@ -125,6 +126,14 @@ For testing purposes, you can use the following dummy users:
 - **Username**: Syed Abdul Basit  
   - **Password**: 1234  
   - **PIN**: 1234 (All accounts share the same PIN)
+
+---
+
+## 🤝 Contributors
+
+- [**Usman Faizyab Khan**](https://github.com/USMAN-FAIZYAB-KHAN)
+- [**Muhammad Owais**](https://github.com/MuhammadOwais03)
+- **Syed Abdul Basit**
 
 ---
 
